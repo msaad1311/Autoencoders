@@ -2,7 +2,7 @@ from tensorflow.keras.layers import Dense, Flatten, Reshape, Input, InputLayer,C
 from tensorflow.keras.models import Sequential, Model
 from skimage.metrics import structural_similarity as ssim
 import numpy as np
-import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as plt
 
 def build_autoencoder(img_shape, code_size,name):
     if name == 'Simple':
@@ -71,3 +71,13 @@ def visualize(img,encoder,decoder):
     print('-'*30,'SSIM:',ssim(img[0],reco[0],multichannel=True),'-'*30)
     
     return
+
+### Metric
+def overall_ssim(actual,predicted):
+    assert len(actual)==len(predicted)
+    results = []
+    for i in range(len(actual)):
+        s = ssim(actual[i],predicted[i],multichannel=True)
+        results.append(s)
+    results = np.array(results)
+    return np.mean(results)
