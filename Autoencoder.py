@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Dense, Flatten, Reshape, Input, InputLayer,Conv2D,MaxPool2D,UpSampling2D
+from tensorflow.keras.layers import Dense, Flatten, Reshape, Input, InputLayer,Conv2D,MaxPool2D,UpSampling2D,Conv2DTranspose
 from tensorflow.keras.models import Sequential, Model
 from skimage.metrics import structural_similarity as ssim
 import numpy as np
@@ -21,8 +21,10 @@ def build_autoencoder(img_shape, code_size,name):
         return encoder, decoder
     
     elif name == 'CNN':
-        pad='same'
-        #The encoder
+
+        pad='valid'
+        img_shape=(128,128,3)
+        code_size=512
         encoder = Sequential()
         encoder.add(Conv2D(filters=128,kernel_size=3,input_shape=(img_shape)))
         encoder.add(MaxPool2D(pool_size=(2,2)))
@@ -40,13 +42,40 @@ def build_autoencoder(img_shape, code_size,name):
         decoder.add(Dense(shape_flatten[1],input_shape=(code_size,)))
         decoder.add(Reshape((shape_pooling[1],shape_pooling[2],shape_pooling[3])))
         decoder.add(UpSampling2D(size=(2,2)))
-        decoder.add(Conv2D(filters=32,kernel_size=3,padding=pad))
+        decoder.add(Conv2DTranspose(filters=32,kernel_size=3,padding=pad))
         decoder.add(UpSampling2D(size=(2,2)))
-        decoder.add(Conv2D(filters=64,kernel_size=3,padding=pad))
+        decoder.add(Conv2DTranspose(filters=64,kernel_size=3,padding=pad))
         decoder.add(UpSampling2D(size=(2,2)))
-        decoder.add(Conv2D(filters=128,kernel_size=3,padding=pad))
-        decoder.add(UpSampling2D(size=(2,2)))
-        decoder.add(Conv2D(filters=3,kernel_size=3,padding=pad))
+        decoder.add(Conv2DTranspose(filters=128,kernel_size=3,padding=pad))
+        # decoder.add(UpSampling2D(size=(2,2)))
+        decoder.add(Conv2DTranspose(filters=3,kernel_size=3,padding=pad))
+
+        # pad='same'
+        # #The encoder
+        # encoder = Sequential()
+        # encoder.add(Conv2D(filters=128,kernel_size=3,input_shape=(img_shape)))
+        # encoder.add(MaxPool2D(pool_size=(2,2)))
+        # encoder.add(Conv2D(filters=64,kernel_size=3))
+        # encoder.add(MaxPool2D(pool_size=(2,2)))
+        # encoder.add(Conv2D(filters=32,kernel_size=3))
+        # encoder.add(MaxPool2D(pool_size=(2,2)))
+        # encoder.add(Flatten())
+        # encoder.add(Dense(code_size))
+
+        # #The Decoder
+        # shape_pooling = encoder.layers[-3].output_shape
+        # shape_flatten = encoder.layers[-2].output_shape
+        # decoder = Sequential()
+        # decoder.add(Dense(shape_flatten[1],input_shape=(code_size,)))
+        # decoder.add(Reshape((shape_pooling[1],shape_pooling[2],shape_pooling[3])))
+        # decoder.add(UpSampling2D(size=(2,2)))
+        # decoder.add(Conv2D(filters=32,kernel_size=3,padding=pad))
+        # decoder.add(UpSampling2D(size=(2,2)))
+        # decoder.add(Conv2D(filters=64,kernel_size=3,padding=pad))
+        # decoder.add(UpSampling2D(size=(2,2)))
+        # decoder.add(Conv2D(filters=128,kernel_size=3,padding=pad))
+        # decoder.add(UpSampling2D(size=(2,2)))
+        # decoder.add(Conv2D(filters=3,kernel_size=3,padding=pad))
         
         return encoder,decoder
     
