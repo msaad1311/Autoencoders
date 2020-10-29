@@ -23,7 +23,7 @@ if gpus:
 PATH =  r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Video_Frames'
 PATH_RESULTS = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\ReconVideo_Frames'
 EMBEDDING_SIZE = 1000
-SHAPE_REQUIRED = 720
+SHAPE_REQUIRED = 240
 
 ## MAIN
 names = read_video(PATH,'bunny_video.mp4')
