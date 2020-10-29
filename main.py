@@ -23,7 +23,7 @@ if gpus:
 PATH =  r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Video_Frames'
 PATH_RESULTS = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\ReconVideo_Frames'
 EMBEDDING_SIZE = 1000
-SHAPE_REQUIRED = 240
+SHAPE_REQUIRED = 128
 
 ## MAIN
 names = read_video(PATH,'bunny_video.mp4')
@@ -35,7 +35,7 @@ img_shape = np.prod(images.shape[1:])
 
 print('[INFO] The preprocessing is complete. Moving to model creation')
 
-model,encoder,decoder = build_model(images,EMBEDDING_SIZE,'CNN2',SHAPE_REQUIRED)
+model,encoder,decoder = build_model(images,EMBEDDING_SIZE,'Simple',SHAPE_REQUIRED)
 model.summary()
 
 model_fit(model,train,test,200)
@@ -63,7 +63,7 @@ os.chdir(path)
 # temp = encoder.predict(images[0])
 # print('Decoder:',decoder.predict(temp).shape)
 
-out = cv2.VideoWriter('Reconstructed.avi',cv2.VideoWriter_fourcc(*"MJPG"),25.0,(720,720))
+out = cv2.VideoWriter('Reconstructed.avi',cv2.VideoWriter_fourcc(*"MJPG"),25.0,(128,128))
 for i in range(len(images)):
     temp = np.expand_dims(images[i],axis=0)
     preds = decoder.predict(encoder.predict(temp))
