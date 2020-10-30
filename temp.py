@@ -27,13 +27,15 @@ def video_creater(video_name,path,fps,width,height):
     images=[]
     names=[]
 
-    for i in range(739):
+    for i in range(740,740+739):
         image = cv2.imread('frame_{}.jpg'.format(i))
         if image.shape != (width,height,3):
             image = cv2.resize(image,(width,height))
+            cv2.imwrite('frame_{}.jpg'.format(i+740),image)
         name = 'frame_{}.jpg'.format(i)
         names.append(name)
         images.append(image)
+
 
     video = cv2.VideoWriter(video_name, 0 , fps, (width,height))
 
@@ -49,16 +51,18 @@ def video_creater(video_name,path,fps,width,height):
 
 if __name__ == "__main__":
     
-    path = os.getcwd()
-    path_reconstructed = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\ReconVideo_Frames'
-    path_original = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Video_Frames'
-    
-    name = 'bunny_video.mp4'
-    name_reconstructed = 'reconstructed.avi'
+    # path = os.getcwd()
+    # path_reconstructed = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\ReconVideo_Frames'
+    # path_original = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Video_Frames'
+    path_original = '/Users/saad/Desktop/Projects/Autoencoders/Temp'
+
+    # name = 'bunny_video.mp4'
+    # name_reconstructed = 'reconstructed.avi'
     name_original = 'original.avi'
     
-    fps,width,height = parameters(name,path)
-    print(fps,width,height)
+    # fps,width,height = parameters(name,path)
+    # print(fps,width,height)
     width,height = 128,128
-    video_creater(name_reconstructed,path_reconstructed,fps,width,height) # Reconstructed video
+    fps=25.0
+    # video_creater(name_reconstructed,path_reconstructed,fps,width,height) # Reconstructed video
     video_creater(name_original,path_original,fps,width,height) # Original video
