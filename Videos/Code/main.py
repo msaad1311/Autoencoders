@@ -5,6 +5,7 @@ import os
 import random
 
 from Autoencoder import *
+from make_video import *
 
 import tensorflow as tf
 
@@ -20,13 +21,13 @@ if gpus:
         print(e)
         
 ## PARAMETERS
-PATH =  r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Video_Frames'
-PATH_RESULTS = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\ReconVideo_Frames'
+PATH =  r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\Video_Frames'
+PATH_RESULTS = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames'
 EMBEDDING_SIZE = 1000
 SHAPE_REQUIRED = 128
 
 ## MAIN
-names = read_video(PATH,'bunny_video.mp4')
+names = read_video(PATH,r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Dataset\bunny_video.mp4')
 images = np.array(read_imgs(PATH,names,SHAPE_REQUIRED))
 images = images.astype('float')/255.
 print(images.shape)
@@ -35,7 +36,7 @@ img_shape = np.prod(images.shape[1:])
 
 print('[INFO] The preprocessing is complete. Moving to model creation')
 
-model,encoder,decoder = build_model(images,EMBEDDING_SIZE,'Simple',SHAPE_REQUIRED)
+model,encoder,decoder = build_model(images,EMBEDDING_SIZE,'CNN2',SHAPE_REQUIRED)
 model.summary()
 
 model_fit(model,train,test,200)
@@ -56,21 +57,15 @@ print(f'The compression rate is: {round((np.prod(img_shape)/EMBEDDING_SIZE),2)}'
 path = PATH_RESULTS.replace('\\','/')
 path_old = os.getcwd()
 os.chdir(path)
-# print(images.shape)
-# print(len(images))
-# print(images[0].shape)
-# print('Encoder:',encoder.predict(images[0]).shape)
-# temp = encoder.predict(images[0])
-# print('Decoder:',decoder.predict(temp).shape)
 
-out = cv2.VideoWriter('Reconstructed.avi',cv2.VideoWriter_fourcc(*"MJPG"),25.0,(128,128))
-for i in range(len(images)):
-    temp = np.expand_dims(images[i],axis=0)
-    preds = decoder.predict(encoder.predict(temp))
-    preds = preds.reshape(preds.shape[1],preds.shape[2],preds.shape[3])
-    preds = preds * 255.
-    # print(preds.shape)
-    cv2.imwrite('frame_{}.jpg'.format(i),preds)
-    out.write(preds)
-out.release
+# out = cv2.VideoWriter('Reconstructed.avi',cv2.VideoWriter_fourcc(*"MJPG"),25.0,(128,128))
+# for i in range(len(images)):
+#     temp = np.expand_dims(images[i],axis=0)
+#     preds = decoder.predict(encoder.predict(temp))
+#     preds = preds.reshape(preds.shape[1],preds.shape[2],preds.shape[3])
+#     preds = preds * 255.
+#     # print(preds.shape)
+#     cv2.imwrite('frame_{}.jpg'.format(i),preds)
+#     out.write(preds)
+# out.release
 os.chdir(path_old)
