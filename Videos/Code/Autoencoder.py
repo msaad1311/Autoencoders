@@ -5,6 +5,7 @@ from numba import cuda
 import matplotlib.pyplot as plt
 import random
 from skimage.metrics import structural_similarity as ssim
+import image_slicer
 
 from sklearn.model_selection import train_test_split
 
@@ -158,6 +159,9 @@ def read_video(path,video_name):
     
     path = path.replace('\\','/')
     cap = cv2.VideoCapture(video_name)
+    fps=cap.get(cv2.CAP_PROP_FPS)
+    width  = cap.get(cv2.CAP_PROP_FRAME_WIDTH) # float
+    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT) # float
     print('Loading Video...')
     index = 0
     successs,img = cap.read()
@@ -176,16 +180,20 @@ def read_video(path,video_name):
     
     print('Completed')
     
-    return names
+    return names,fps,int(width),int(height)
 
-def read_imgs(path,names,shape_req):
+def read_imgs(path,names,slices,width,height):
     path = path.replace('\\','/')
     path_old=os.getcwd()
     os.chdir(path)
     img =[]
+    temp_array =[]
     for name in names:
-        temp = cv2.imread(name)
-        img.append(cv2.resize(temp,(shape_req,shape_req)))
+        temp = image_slicer.slice(name,slices,save=False)
+        for s in range(slices):
+            temp_array.append(np.asarray(temp[s].image))
+    img = np.array(temp_array)
+        # img.append(cv2.resize(temp,(width,height)))
     os.chdir(path_old)
     return img
 
