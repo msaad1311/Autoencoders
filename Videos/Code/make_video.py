@@ -46,7 +46,7 @@ def video_creater(video_name,path,fps,width,height,types):
     
     if types=='Original':
         for n in names:
-            os.remove(names)
+            os.remove(n)
 
     os.chdir(path_old)
     return      
