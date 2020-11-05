@@ -193,9 +193,12 @@ def read_imgs(path,names,slices,width,height):
         temp = cv2.imread(name)
         temp = cv2.resize(temp,(width,height))
         cv2.imwrite(name,temp)
-        temp = image_slicer.slice(name,slices,save=False)
-        for s in range(slices):
-            temp_array.append(np.asarray(temp[s].image))
+        if slices>=2:
+            temp = image_slicer.slice(name,slices,save=False)
+            for s in range(slices):
+                temp_array.append(np.asarray(temp[s].image))
+        else:
+            temp_array.append(cv2.imread(name))
     img = np.array(temp_array)
         # img.append(cv2.resize(temp,(width,height)))
     os.chdir(path_old)
