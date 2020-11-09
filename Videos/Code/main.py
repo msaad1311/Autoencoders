@@ -1,9 +1,12 @@
 ## Libraries
 import numpy as np
-# from cv2 import cv2
-import cv2
+from cv2 import cv2
+# import cv2
 import os
 import random
+import sys
+from tqdm.notebook import tqdm, trange
+import gc
 
 from Autoencoder import *
 from make_video import *
@@ -22,13 +25,86 @@ if gpus:
         print(e)
         
 ## PARAMETERS
-PATH =  r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Video_Frames'
-PATH_RESULTS = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames'
-EMBEDDING_SIZE = 1000
-SHAPE_REQUIRED = 256
+DATASET = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Dataset' ## where there is dataset
+DATASET_NAME = r'bunny_video.mp4' ## Name of the video
+FRAMES = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\Video_Frames' ## where you want to save the frames
+RECONSTRUCTED = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames' ## where the reconstructed frames are saved
+
+WIDTH = 640 ## width of the reconstrcted image
+HEIGHT = 480 ## height of the reconstrcted image
+FPS = 25 ## fps of the reconstrcted image
+SLICES = 2 ## Number of slices to be made on the image
+
+TEST_SIZE = 0.1
+EMBEDDING_SIZE = 512 ## bottleneck layer nodes
 
 ## MAIN
-names = read_video(PATH,r'C:\Users\saad\Desktop\Autoencoders\Videos\Dataset\bunny_video.mp4')
+
+#Loading file
+names,fps,width,height = read_video(FRAMES,os.path.join(DATASET,DATASET_NAME))
+print(f'The fps is {fps}, The width of the frame is {width} and the height of the frame is {height}')
+
+#Scaling Images
+images = np.array(read_imgs(FRAMES,names,SLICES,WIDTH,HEIGHT))
+images = images.astype('float32')/255.
+print(f'The shape of the images is {images.shape}')
+
+#Sanity check on the images
+ran = random.sample(range(0,len(images)),5)
+for r in ran:
+    plt.imshow(images[r])
+    plt.show()
+    
+#Taking User Input
+user = input('Do you want to continue? [Y/N]')
+if user=='N':
+    print('Shutting the Program Down.')
+    sys.exit()
+
+else:
+    #Splitting the data in training and testing
+    train,test = splitter(images,TEST_SIZE)
+    print(f'The shape of train is {train.shape}')
+    print(f'The shape of test is {test.shape}')
+    
+    #Creating the models
+    img_shape = images.shape[1:]
+    model1,model2 = build_autoencoder(img_shape,EMBEDDING_SIZE,'Hi-Res',None)
+    
+    model1.compile(loss='mse',optimizer='adam',metrics=['mae'])
+    model2.compile(loss='mse',optimizer='adam',metrics=['mae'])
+    
+    #Fitting the first model
+    model1 = model_fit(model1,'model1',train,train,1,5)
+    
+    #Visualizing the model results
+    visualize(model1,train,5)
+    
+    #Preparing the data for second model
+    print('-'*30,'Preparing dataset for the second model','-'*30)
+    train_intermediate = data_prep(train,model1,None)
+    
+    #Sanity check for the shape
+    assert train.shape == train_intermediate.shape
+    
+    #Fitting the second model
+    model2 = model_fit(model2,'model2',train_intermediate,train,1,5)
+    
+    #Visualizing the output of second model
+    visualize(model2,train_intermediate,5)
+    
+    predictions = data_prep(images,model1,model2)
+    predictions = predictions * 255.
+    
+    overall_ssim(images,predictions)
+    
+    
+    
+'''    
+
+
+
+
 images = np.array(read_imgs(PATH,names,SHAPE_REQUIRED))
 images = images.astype('float')/255.
 print(images.shape)
@@ -69,4 +145,8 @@ for i in range(len(images)):
     cv2.imwrite('frame_{}.jpg'.format(i),preds)
     out.write(preds)
 out.release
-os.chdir(path_old)
+os.chdir(path_old).
+
+
+
+'''
