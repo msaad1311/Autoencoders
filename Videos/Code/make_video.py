@@ -3,6 +3,7 @@ import cv2
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 def parameters(name,path):
     path = path.replace('\\','/')
@@ -19,7 +20,8 @@ def parameters(name,path):
     
     
     
-def video_creater(video_name,path,fps,width,height,types):
+def video_creater(video_name,path,fps,width,height,ims):
+    print('Working on Reconstructed Video')
     path = path.replace('\\','/')
     path_old = os.getcwd()
 
@@ -27,44 +29,69 @@ def video_creater(video_name,path,fps,width,height,types):
 
     images=[]
     names=[]
+    count=0
     
-    for i in range(739):
-        image = cv2.imread('frame_{}.jpg'.format(i))
-        if image.shape != (width,height,3):
-            image = cv2.resize(image,(width,height))
-            cv2.imwrite('frame_{}.jpg'.format(i+740),image)
+    for i in tqdm(range(len(ims)),desc='Frames Saving'):
+        cv2.imwrite('frame_{}.jpg'.format(i),ims[i])
+    
+    for i in tqdm(range(len(ims)),desc='Frame Reading'):
+        im = cv2.imread('frame_{}.jpg'.format(i))
         name = 'frame_{}.jpg'.format(i)
         names.append(name)
-        images.append(image)
-    
+        images.append(im)
+
+    for i in tqdm(range(0,len(images)-1,2),desc='Concatenating Frames'):
+        x1 = cv2.imread(names[i])
+        x2 = cv2.imread(names[i+1])
+        x3 = cv2.hconcat([x1,x2])
+        try:
+            os.remove(names[i])
+            os.remove(names[i+1])
+        except IndexError:
+            print(i)
+            break
+        cv2.imwrite('frame_{}.jpg'.format(count),x3)
+        count+=1
+
     video = cv2.VideoWriter(video_name, 0 , fps, (width,height))
     
-    for image in names:
-        video.write(cv2.imread(image))
+    for n in names:
+        video.write(cv2.imread(n))
 
     cv2.destroyAllWindows()
     video.release()
     
-    if types=='Original':
-        for n in names:
-            os.remove(n)
-
     os.chdir(path_old)
-    return      
+    return    
 
-if __name__ == "__main__":
+def original_video(video_name,saving_path,path,fps,data):
+    print('Working on Original Video')
+    path = path.replace('\\','/')
+    saving_path = saving_path.replace('\\','/')
     
-    path = os.getcwd()
-    path_reconstructed = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\ReconVideo_Frames'
-    path_original = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Video_Frames'
-    # path_original = '/Users/saad/Desktop/Projects/Autoencoders/Temp' #for Mac
+    path_old = os.getcwd()
 
-    name = 'bunny_video.mp4'
-    name_reconstructed = 'reconstructed.avi'
-    name_original = 'original.avi'
+    os.chdir(path)
+
+    images=[]
+    names=[]
+    for i in tqdm(range(len(data)),desc='Frame Reading'):
+        im = cv2.imread('frame_{}.jpg'.format(i))
+        height, width = im.shape[:2]
+        name = 'frame_{}.jpg'.format(i)
+        names.append(name)
+        images.append(im)
     
-    fps,width,height = parameters(name,path)
-    print(fps,width,height)
-    width,height = 128,128
-    video_creater(name_reconstructed,path_reconstructed,fps,width,height,'Reconstructed') # Reconstructed video
-    video_creater(name_original,path_original,fps,width,height,'Original') # Original video
+    video = cv2.VideoWriter(video_name, 0 , fps, (int(width),int(height)))
+    
+    for n in names:
+        video.write(cv2.imread(n))
+
+    cv2.destroyAllWindows()
+    video.release()
+
+    os.rename(os.path.join(os.getcwd(),video_name), 
+    os.path.join(saving_path,video_name))
+    
+    os.chdir(path_old)
+    return    

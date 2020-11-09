@@ -103,26 +103,21 @@ def build_autoencoder(img_shape, code_size,name,shape_req):
         return encoder, decoder
     
     elif name=='CNN':
+        #The Encoder
         encoder = Sequential()
-        encoder.add(Conv2D(128,3,strides=2,input_shape=(shape_req,shape_req,3)))
-        encoder.add(Conv2D(128,3,strides=2))
-        encoder.add(Conv2D(128,3,strides=2))
-        encoder.add(Conv2D(128,3,strides=1))
-        encoder.add(Flatten())
-        encoder.add(Dense(code_size))
+        encoder.add(InputLayer(img_shape))
+        encoder.add(Conv2D(filters=32,kernel_size=3,strides=2,padding='same'))
+        encoder.add(Conv2D(filters=32,kernel_size=3,strides=2,padding='same'))
+        encoder.add(Conv2D(filters=32,kernel_size=3,strides=2,padding='same'))
+        encoder.add(Conv2D(filters=32,kernel_size=3,strides=2,padding='same'))
 
-        shape_pooling = encoder.layers[-3].output_shape
-        shape_flatten = encoder.layers[-2].output_shape
-
+        #The Decoder
         decoder = Sequential()
-        decoder.add(Dense(shape_flatten[1],input_shape=(code_size,)))
-        decoder.add(Reshape((shape_pooling[1],shape_pooling[2],shape_pooling[3])))
-        decoder.add(Conv2DTranspose(128,3,strides=1))
-        decoder.add(Conv2DTranspose(128,3,strides=2))
-        decoder.add(Conv2DTranspose(128,3,strides=2))
-        decoder.add(Conv2DTranspose(128,3,strides=2))
-        decoder.add(Conv2DTranspose(3,3,strides=1))
-        decoder.add(Cropping2D(cropping=((1, 0), (1, 0)), data_format=None))
+        decoder.add(InputLayer(encoder.output_shape[1:]))
+        decoder.add(Conv2DTranspose(filters=32,kernel_size=3,strides=2,padding='same'))
+        decoder.add(Conv2DTranspose(filters=32,kernel_size=3,strides=2,padding='same'))
+        decoder.add(Conv2DTranspose(filters=32,kernel_size=3,strides=2,padding='same'))
+        decoder.add(Conv2DTranspose(filters=3,kernel_size=3,strides=2,padding='same'))
         
         return encoder,decoder
     
@@ -177,7 +172,12 @@ def build_autoencoder(img_shape, code_size,name,shape_req):
         
         return autoencoder1,autoencoder2
 
-def model_fit(model,file_name,X,Y,epoch,batch_size=None):
+def model_fit(model,file_name,saving_path,X,Y,epoch,batch_size=None):
+
+    path_old = os.getcwd()
+    saving_path = saving_path.replace('\\','/')
+    os.chdir(saving_path)
+
     filepath = '{}.hdf5'.format(file_name)
     checkpoint = ModelCheckpoint(filepath,monitor='val_loss',save_best_only=True)
     
@@ -194,6 +194,8 @@ def model_fit(model,file_name,X,Y,epoch,batch_size=None):
     print('-'*30,'Loading the best weights','-'*30)
     model.load_weights(filepath)
     
+    os.chdir(path_old)
+
     return model
         
     
@@ -220,7 +222,7 @@ def visualize(model,data,num_imgs):
 def overall_ssim(actual,predicted):
     assert len(actual)==len(predicted)
     results = []
-    for i in range(len(actual)):
+    for i in tqdm(range(len(actual)),desc='SSIM Calculation'):
         s = ssim(actual[i],predicted[i],multichannel=True)
         results.append(s)
     results = np.array(results)
@@ -250,6 +252,31 @@ def data_prep(data,model1,model2=None):
 '''
 The following code is not being used as it is really primitive and not
 as good as the other ones
+elif name=='CNN':
+        encoder = Sequential()
+        encoder.add(Conv2D(128,3,strides=2,input_shape=(shape_req,shape_req,3)))
+        encoder.add(Conv2D(128,3,strides=2))
+        encoder.add(Conv2D(128,3,strides=2))
+        encoder.add(Conv2D(128,3,strides=1))
+        encoder.add(Flatten())
+        encoder.add(Dense(code_size))
+
+        shape_pooling = encoder.layers[-3].output_shape
+        shape_flatten = encoder.layers[-2].output_shape
+
+        decoder = Sequential()
+        decoder.add(Dense(shape_flatten[1],input_shape=(code_size,)))
+        decoder.add(Reshape((shape_pooling[1],shape_pooling[2],shape_pooling[3])))
+        decoder.add(Conv2DTranspose(128,3,strides=1))
+        decoder.add(Conv2DTranspose(128,3,strides=2))
+        decoder.add(Conv2DTranspose(128,3,strides=2))
+        decoder.add(Conv2DTranspose(128,3,strides=2))
+        decoder.add(Conv2DTranspose(3,3,strides=1))
+        decoder.add(Cropping2D(cropping=((1, 0), (1, 0)), data_format=None))
+        
+        return encoder,decoder
+
+
 
 elif name == 'CNN':
 

@@ -37,6 +37,8 @@ DATASET = r'C:\Users\saad\Desktop\Autoencoders\Videos\Dataset' ## where there is
 DATASET_NAME = r'bunny_video.mp4' ## Name of the video
 FRAMES = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Video_Frames' ## where you want to save the frames
 RECONSTRUCTED = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames' ## where the reconstructed frames are saved
+WEIGHTS = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Weights'
+VIDEO = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Video'
 
 WIDTH = 640 ## width of the reconstrcted image
 HEIGHT = 480 ## height of the reconstrcted image
@@ -83,7 +85,7 @@ else:
     model2.compile(loss='mse',optimizer='adam',metrics=['mae'])
     
     #Fitting the first model
-    model1 = model_fit(model1,'model1',train,train,1,5)
+    model1 = model_fit(model1,'model1',WEIGHTS,train,train,1,5)
     
     #Visualizing the model results
     visualize(model1,train,5)
@@ -96,7 +98,7 @@ else:
     assert train.shape == train_intermediate.shape
     
     #Fitting the second model
-    model2 = model_fit(model2,'model2',train_intermediate,train,1,5)
+    model2 = model_fit(model2,'model2',WEIGHTS,train_intermediate,train,1,5)
     
     #Visualizing the output of second model
     visualize(model2,train_intermediate,5)
@@ -105,14 +107,18 @@ else:
     predictions = predictions * 255.
     
     print(f'The overall similarity index is : {overall_ssim(images,predictions)}')
+
+    user_vid = input('Do You want to Generate Video? [Y/N]')
+    if user_vid =='N':
+        print('Exiting the program')
+        sys.exit()
+    else:
+        video_creater('Recon.avi',VIDEO,25.,640,480,predictions)
+        original_video('Original.avi',VIDEO,FRAMES,25.,names)
     
     
     
 '''    
-
-
-
-
 images = np.array(read_imgs(PATH,names,SHAPE_REQUIRED))
 images = images.astype('float')/255.
 print(images.shape)
