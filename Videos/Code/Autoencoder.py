@@ -1,6 +1,6 @@
 import numpy as np
-from cv2 import cv2
-# import cv2
+# from cv2 import cv2
+import cv2
 import os
 from numba import cuda
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ import random
 from skimage.metrics import structural_similarity as ssim
 import image_slicer
 import gc
-
+from tqdm import tqdm
 
 from sklearn.model_selection import train_test_split
 

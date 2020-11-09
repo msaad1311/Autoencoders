@@ -1,11 +1,11 @@
 ## Libraries
 import numpy as np
-from cv2 import cv2
-# import cv2
+# from cv2 import cv2
+import cv2
 import os
 import random
 import sys
-from tqdm.notebook import tqdm, trange
+from tqdm import tqdm
 import gc
 
 from Autoencoder import *
@@ -25,10 +25,18 @@ if gpus:
         print(e)
         
 ## PARAMETERS
-DATASET = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Dataset' ## where there is dataset
+
+#For Adrastea
+# DATASET = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Dataset' ## where there is dataset
+# DATASET_NAME = r'bunny_video.mp4' ## Name of the video
+# FRAMES = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\Video_Frames' ## where you want to save the frames
+# RECONSTRUCTED = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames' ## where the reconstructed frames are saved
+
+#For Naon
+DATASET = r'C:\Users\saad\Desktop\Autoencoders\Videos\Dataset' ## where there is dataset
 DATASET_NAME = r'bunny_video.mp4' ## Name of the video
-FRAMES = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\Video_Frames' ## where you want to save the frames
-RECONSTRUCTED = r'C:\Users\Saad.LAKES\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames' ## where the reconstructed frames are saved
+FRAMES = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Video_Frames' ## where you want to save the frames
+RECONSTRUCTED = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames' ## where the reconstructed frames are saved
 
 WIDTH = 640 ## width of the reconstrcted image
 HEIGHT = 480 ## height of the reconstrcted image
@@ -96,7 +104,7 @@ else:
     predictions = data_prep(images,model1,model2)
     predictions = predictions * 255.
     
-    overall_ssim(images,predictions)
+    print(f'The overall similarity index is : {overall_ssim(images,predictions)}')
     
     
     
