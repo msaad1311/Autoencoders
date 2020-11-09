@@ -245,6 +245,14 @@ def data_prep(data,model1,model2=None):
     print(f'The shape of the input for the model is {temp.shape}')
     
     return temp
+
+def cleanup(lst,path):
+    path = path.replace('\\','/')
+    for l in lst:
+        shutil.rmtree(os.path.join(path,l))
+        print(f'Removed {l}')
+    return
+
     
 
 

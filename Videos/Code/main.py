@@ -39,6 +39,7 @@ FRAMES = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Video_Frames' ## wh
 RECONSTRUCTED = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\ReconVideo_Frames' ## where the reconstructed frames are saved
 WEIGHTS = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Weights'
 VIDEO = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results\Video'
+ROOT = r'C:\Users\saad\Desktop\Autoencoders\Videos\Results'
 
 WIDTH = 640 ## width of the reconstrcted image
 HEIGHT = 480 ## height of the reconstrcted image
@@ -115,6 +116,9 @@ else:
     else:
         video_creater('Recon.avi',VIDEO,25.,640,480,predictions)
         original_video('Original.avi',VIDEO,FRAMES,25.,names)
+    
+    folders = ['ReconVideo_Frames','ReconVideo_Frames - Copy','Video_Frames']
+    cleanup(folders,ROOT)
     
     
     
