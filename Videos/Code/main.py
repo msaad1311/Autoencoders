@@ -85,7 +85,7 @@ else:
     model2.compile(loss='mse',optimizer='adam',metrics=['mae'])
     
     #Fitting the first model
-    model1 = model_fit(model1,'model1',WEIGHTS,train,train,1,5)
+    model1 = model_fit(model1,'model1',WEIGHTS,train,train,200,5)
     
     #Visualizing the model results
     visualize(model1,train,5)
@@ -98,7 +98,7 @@ else:
     assert train.shape == train_intermediate.shape
     
     #Fitting the second model
-    model2 = model_fit(model2,'model2',WEIGHTS,train_intermediate,train,1,5)
+    model2 = model_fit(model2,'model2',WEIGHTS,train_intermediate,train,200,5)
     
     #Visualizing the output of second model
     visualize(model2,train_intermediate,5)
