@@ -9,6 +9,7 @@ from skimage.metrics import structural_similarity as ssim
 import image_slicer
 import gc
 from tqdm import tqdm
+import shutil
 
 from sklearn.model_selection import train_test_split
 
