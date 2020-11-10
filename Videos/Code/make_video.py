@@ -61,6 +61,10 @@ def video_creater(video_name,path,fps,width,height,ims):
     cv2.destroyAllWindows()
     video.release()
     
+    for i in range(count):
+        os.remove('frame_{}.jpg'.format(i))
+    print('Reconstructed Frames removed.')
+
     os.chdir(path_old)
     return    
 

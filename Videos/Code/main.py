@@ -61,10 +61,10 @@ images = images.astype('float32')/255.
 print(f'The shape of the images is {images.shape}')
 
 #Sanity check on the images
-ran = random.sample(range(0,len(images)),5)
-for r in ran:
-    plt.imshow(images[r])
-    plt.show()
+# ran = random.sample(range(0,len(images)),5)
+# for r in ran:
+#     plt.imshow(images[r])
+#     plt.show()
     
 #Taking User Input
 user = input('Do you want to continue? [Y/N]')
@@ -89,7 +89,7 @@ else:
     model1 = model_fit(model1,'model1',WEIGHTS,train,train,200,5)
     
     #Visualizing the model results
-    visualize(model1,train,5)
+    # visualize(model1,train,5)
     
     #Preparing the data for second model
     print('-'*30,'Preparing dataset for the second model','-'*30)
@@ -102,12 +102,12 @@ else:
     model2 = model_fit(model2,'model2',WEIGHTS,train_intermediate,train,200,5)
     
     #Visualizing the output of second model
-    visualize(model2,train_intermediate,5)
+    # visualize(model2,train_intermediate,5)
     
     predictions = data_prep(images,model1,model2)
     predictions = predictions * 255.
     
-    print(f'The overall similarity index is : {overall_ssim(images,predictions)}')
+    # print(f'The overall similarity index is : {overall_ssim(images,predictions)}')
 
     user_vid = input('Do You want to Generate Video? [Y/N]')
     if user_vid =='N':
@@ -119,6 +119,8 @@ else:
     
     folders = ['ReconVideo_Frames','ReconVideo_Frames - Copy','Video_Frames']
     cleanup(folders,ROOT)
+    
+    
     
     
     

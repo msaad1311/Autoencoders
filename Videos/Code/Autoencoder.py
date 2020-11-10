@@ -250,8 +250,13 @@ def data_prep(data,model1,model2=None):
 def cleanup(lst,path):
     path = path.replace('\\','/')
     for l in lst:
-        shutil.rmtree(os.path.join(path,l))
-        print(f'Removed {l}')
+        try:
+            shutil.rmtree(os.path.join(path,l))
+            print(f'Removed {l}')
+        except FileNotFoundError:
+            print(f'{l} not found.')
+            pass
+        
     return
 
     
