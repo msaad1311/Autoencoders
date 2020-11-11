@@ -31,6 +31,14 @@ if gpus:
         print(e)
 
 def read_video(path,video_name):
+
+    '''
+    path = the area where the frames are supposed to
+    be saved. 
+
+    video_name = the name of the video. You can 
+    pass in the path of the video
+    '''
     
     path = path.replace('\\','/')
     cap = cv2.VideoCapture(video_name)
