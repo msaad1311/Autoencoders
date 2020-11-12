@@ -219,7 +219,7 @@ def visualize(model,data,num_imgs):
         plt.title('Original')
         
         plt.subplot(122)
-        plt.imshow(pred[0,:,:,:])
+        plt.imshow(pred[0,:,:,:].astype(int))
         plt.title('Reconstructed')
         
         plt.show()
